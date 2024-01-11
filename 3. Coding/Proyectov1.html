@@ -1,0 +1,134 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Ingreso y Visualización de Datos</title>
+
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            text-align: center;
+            margin: 20px;
+        }
+
+        h2 {
+            text-align: center;
+        }
+
+        form {
+            display: grid;
+            gap: 10px;
+            justify-content: center;
+            max-width: 400px;
+            margin: auto;
+        }
+
+        table {
+            margin-top: 20px;
+            margin-bottom: 20px;
+            border-collapse: collapse;
+            width: 80%;
+            margin-left: auto;
+            margin-right: auto;
+        }
+
+        table, th, td {
+            border: 1px solid black;
+            text-align: center;
+        }
+
+        th, td {
+            padding: 10px;
+        }
+    </style>
+</head>
+<body>
+
+    <h2>Ingrese los datos de la acción:</h2>
+
+    <form id="miFormulario">
+        <label for="nombreAccion">Nombre de la Acción:</label>
+        <input type="text" id="nombreAccion" name="nombreAccion" required>
+
+        <label for="fechaCompra">Fecha de Compra:</label>
+        <input type="date" id="fechaCompra" name="fechaCompra" required>
+
+        <label for="precioPorAccion">Precio de Compra por Acción:</label>
+        <input type="number" id="precioPorAccion" name="precioPorAccion" step="0.01" required pattern="[0-9]+(\.[0-9]+)?" title="Ingrese un número válido">
+
+        <label for="cantidadAcciones">Cantidad de Acciones:</label>
+        <input type="number" id="cantidadAcciones" name="cantidadAcciones" step="1" required pattern="[0-9]+" title="Ingrese un número entero válido">
+
+        <input type="button" value="Agregar a la Tabla" onclick="agregarAccion()">
+    </form>
+
+    <table border="1" id="tablaDatos">
+        <tr>
+            <th>Nombre de la Acción</th>
+            <th>Fecha de Compra</th>
+            <th>Precio por Acción</th>
+            <th>Cantidad de Acciones</th>
+            <th>Costo Total de Compra</th>
+        </tr>
+    </table>
+
+    <script>
+        class Accion {
+            constructor(nombre, fecha, precioPorAccion, cantidadAcciones, costoTotalCompra) {
+                this.nombreAccion = nombreAccion;
+                this.fecha = fecha;
+                this.precioPorAccion = precioPorAccion;
+                this.cantidadAcciones = cantidadAcciones;
+                this.costoTotalCompra = costoTotalCompra;
+            }
+
+            crearAccionHTML() {
+                const nuevaFila = document.createElement('tr');
+                const celdas = [
+                    this.nombreAccion,
+                    this.fecha,
+                    this.precioPorAccion.toFixed(2),
+                    this.cantidadAcciones,
+                    this.costoTotalCompra.toFixed(2)
+                ];
+
+                celdas.forEach((valor) => {
+                    const celda = document.createElement('td');
+                    celda.innerHTML = valor;
+                    nuevaFila.appendChild(celda);
+                });
+
+                return nuevaFila;
+            }
+        }
+
+        function agregarAccion() {
+            const nombreAccion = document.getElementById('nombreAccion').value;
+            const fechaCompra = document.getElementById('fechaCompra').value;
+            const precioPorAccion = parseFloat(document.getElementById('precioPorAccion').value);
+            const cantidadAcciones = parseInt(document.getElementById('cantidadAcciones').value);
+
+            // Verificar si los campos están vacíos
+            if (!nombreAccion || !fechaCompra || isNaN(precioPorAccion) || isNaN(cantidadAcciones)) {
+                alert('Por favor, complete todos los campos antes de agregar a la tabla.');
+                return;
+            }
+
+            const costoTotalCompra = precioPorAccion * cantidadAcciones;
+
+            const nuevaFila = new Accion(nombreAccion, fechaCompra, precioPorAccion, cantidadAcciones, costoTotalCompra);
+
+            const tabla = document.getElementById('tablaDatos');
+            tabla.appendChild(nuevaFila.crearAccionHTML());
+
+            // Limpiar campos del formulario después de agregar a la tabla
+            document.getElementById('nombreAccion').value = '';
+            document.getElementById('fechaCompra').value = '';
+            document.getElementById('precioPorAccion').value = '';
+            document.getElementById('cantidadAcciones').value = '';
+        }
+    </script>
+
+</body>
+</html>
