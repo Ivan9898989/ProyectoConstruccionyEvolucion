@@ -1,3 +1,50 @@
+<?php
+// Verificar si el formulario ha sido enviado
+if ($_SERVER["REQUEST_METHOD"] == "POST") {
+    // Recuperar datos del formulario
+    $nombreAccion = $_POST['nombreAccion'];
+    $fechaCompra = $_POST['fechaCompra'];
+    $precioPorAccion = $_POST['precioPorAccion'];
+    $cantidadAcciones = $_POST['cantidadAcciones'];
+
+    // Conectar a la base de datos (debes llenar los detalles de la conexión)
+    $conexion = new mysqli("basedatos:3306", "root", "ivan", "acciones");
+    
+
+    // Verificar conexión
+    if ($conexion->connect_error) {
+        die("Error de conexión: " . $conexion->connect_error);
+    }
+
+    // Preparar la consulta SQL
+    $sql = "INSERT INTO acciones (nombreAccion, fechaCompra, precioPorAccion, cantidadAcciones)
+            VALUES ('$nombreAccion', '$fechaCompra', $precioPorAccion, $cantidadAcciones)";
+
+    // Ejecutar la consulta
+    if ($conexion->query($sql) === TRUE) {
+        echo "Registro insertado correctamente";
+    } else {
+        echo "Error al insertar registro: " . $conexion->error;
+    }
+
+    // Cerrar conexión
+    $conexion->close();
+}
+?>
+
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <title>Formulario de Acciones</title>
+</head>
+<body>
+    <form id="miFormulario" action="" method="POST">
+        <!-- Campos del formulario aquí -->
+    </form>
+</body>
+</html>
+
 <!DOCTYPE html>
 <html lang="es">
 <head>
@@ -50,7 +97,7 @@
     <h2>Ingrese los datos de la acción:</h2>
 
     <!-- Formulario -->
-    <form id="miFormulario" method="post" action="insertar_datos.php">
+    <form id="miFormulario" action="" method="POST">
         <!-- Campo para el nombre de la acción -->
         <label for="nombreAccion">Nombre de la Acción:</label>
         <select id="nombreAccion" name="nombreAccion" required>
@@ -65,24 +112,26 @@
             <option value="AMD">AMD (Advanced Micro Devices, Inc.)</option>
             <option value="PYPL">PYPL (PayPal Holdings, Inc.)</option>
             <option value="INTC">INTC (Intel Corporation)</option>
+            
         </select>
 
-        <!-- Campo para el precio por acción -->
+        
         <label for="precioPorAccion">Precio de Compra por Acción:</label>
-        <input type="number" id="precioPorAccion" name="precioPorAccion" step="0.01" required pattern="[0-9]+(\.[0-9]+)?" title="Ingrese un número válido">
+        <input type="text" id="precioPorAccion" name="precioPorAccion" required pattern="[0-9]+(\.[0-9]+)?" title="Ingrese un número válido">
 
         <label for="fechaCompra">Fecha de Compra:</label>
         <input type="date" id="fechaCompra" name="fechaCompra" required>
 
         <label for="cantidadAcciones">Cantidad de Acciones:</label>
-        <input type="number" id="cantidadAcciones" name="cantidadAcciones" step="1" required pattern="[0-9]+" title="Ingrese un número entero válido" oninput="validarNumeroPositivo(this)">
+        <input type="number" id="cantidadAcciones" name="cantidadAcciones" required pattern="[0-9]+" title="Ingrese un número entero válido">
 
         <!-- Botón para agregar a la Tabla -->
-        <input type="submit" value="Agregar a la Tabla" onclick="agregarAccion()">
+        <input type="submit" value="Agregar a la Tabla">
+    
     </form>
 
     <!-- Tabla de Datos -->
-    <table border="1" id="tablaDatos">
+    <table border="1">
         <tr>
             <!-- Encabezados de la tabla -->
             <th>Nombre de la Acción</th>
@@ -99,7 +148,7 @@
         }
 
         // Realizar consulta SQL para obtener los datos de la tabla acciones
-        $sql = "SELECT * FROM acciones";
+        $sql = "SELECT * FROM acciones ORDER BY nombreAccion";
         $resultado = $conn->query($sql);
 
         // Comprobar si se encontraron resultados
@@ -122,7 +171,6 @@
         $conn->close();
         ?>
     </table>
-
     <!-- Script JavaScript -->
     <script>
         // Función para obtener datos de la API de Finnhub y llenar los campos del formulario
@@ -192,3 +240,4 @@
     </script>
 </body>
 </html>
+
